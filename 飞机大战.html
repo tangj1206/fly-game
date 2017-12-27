@@ -35,6 +35,501 @@
     const RUNNING = 2;
     const PAUSED = 3;
     const GAMEOVER = 4;
+    // 04 定义表示游戏当前阶段的变量
+    var state = 0;
+    // 05 定义表示游戏得分的变量
+    var score = 0;
+    // 06 定义表示游戏的生命值
+    var life = 3;
+
+    // 1 完成游戏的开始阶段
+    // 11 绘制游戏的背景图片
+    // 111 加载背景图片
+    var bg = new Image();
+    bg.src = "./img/background.jpg";
+    // 112初始化相关数据 - 来源于服务器端
+    var BG = {
+        imgs : bg,//表示图片内容
+        width : 512,
+        height : 768
+    }
+    // 113 定义背景图片的构造器 - 封装
+    function Bg(config) {
+        // a. 接收初始化的数据
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        // 将2张图片的y值定义为变量
+        this.y1 = 0;
+        this.y2 = -this.height;
+        // b. 定义绘制方法
+        this.paint = function (cxt) {
+            cxt.drawImage(this.imgs,0,this.y1);
+            cxt.drawImage(this.imgs,0,this.y2);
+        }
+        // c. 定义动画方法
+        this.step = function () {
+            //向下移动
+            this.y1+=2;
+            this.y2+=2;
+            //判断边界
+            if(this.y2 == 0){
+                this.y1 = -this.height;
+            }
+            if(this.y1 == 0){
+                this.y2 = -this.height;
+            }
+        }
+    }
+    // 114 创建背景对象
+    var backg = new Bg(BG);
+    // 115 加载游戏LOGO图片
+    var logo = new Image();
+    logo.src = './img/start.png';
+
+    // 从1 到 2过度
+    canvas.onclick = function () {
+        // 判断当前状态为 START 时，修改为 STARTTING
+        if(state == START){
+            state = STARTTING;
+        }
+    }
+
+    // 2 完成游戏的动画过度阶段
+    // 21 加载动画图片
+    var loadings = [];
+    loadings[0]=new Image();
+    loadings[0].src="./img/hero4.png";
+    loadings[1]=new Image();
+    loadings[1].src="./img/hero5.png";
+    loadings[2]=new Image();
+    loadings[2].src="./img/hero6.png";
+    loadings[3]=new Image();
+    loadings[3].src="./img/hero7.png";
+    loadings[4]=new Image();
+    loadings[4].src="./img/hero8.png";
+    // 22 初始化必要数据
+    var LOADING = {
+        imgs : loadings,
+        width : 79,
+        height : 400,
+        sum : loadings.length
+    };
+    // 23 定义动画图片的构造器
+    function Loading(config) {
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        this.sum = config.sum;
+        //定义图片数组的索引值
+        this.frameIndex = 0;
+        // 绘制方法
+        this.paint = function (cxt) {
+            cxt.drawImage(this.imgs[this.frameIndex], (WIDTH-this.width)/2, (HEIGHT-this.height)/2)
+        }
+        // 定义表示相对速度的变量
+        this.speed = 0;
+        // 动画方法
+        this.step = function () {
+            this.speed++;
+            if(this.speed%6 == 0){
+                this.frameIndex++;
+            }
+            if(this.frameIndex == 5){
+                state = RUNNING;
+            }
+        }
+    }
+    // 24 创建动画对象
+    var loading = new Loading(LOADING);
+
+    // 3 完成游戏的运行阶段
+    // 31 完成我方飞机相关功能
+    // 311 加载我方飞机的图片
+    var heros=[];
+    heros[0]=new Image();
+    heros[0].src="./img/hero1.png";
+    heros[1]=new Image();
+    heros[1].src="./img/hero2.png";
+    heros[2]=new Image();
+    heros[2].src="./img/hero3.png";
+    heros[3]=new Image();
+    heros[3].src="./img/hero_blowup_n1.png";
+    heros[4]=new Image();
+    heros[4].src="./img/hero_blowup_n2.png";
+    heros[5]=new Image();
+    heros[5].src="./img/hero_blowup_n3.png";
+    heros[6]=new Image();
+    heros[6].src="./img/hero_blowup_n4.png";
+    // 312 初始化必要的数据
+    var HERO = {
+        imgs : heros,
+        width : 80,
+        height : 81,
+        sum : heros.length,
+        life : 20
+    }
+    // 313 创建我方飞机的构造器
+    function Hero(config) {
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        this.sum = config.sum;
+        //定义图片数组的索引值
+        this.frameIndex = 0;
+        //定义我方飞机的坐标值
+        this.x = (WIDTH-this.width)/2;
+        this.y = HEIGHT-this.height-30;
+        // 定义是否执行爆破动画的标识
+        this.down = false;
+        this.life = config.life;
+        //绘制方法
+        this.paint = function (cxt) {
+            cxt.drawImage(this.imgs[this.frameIndex], this.x, this.y);
+        }
+        this.speed=0;
+        // 动画方法
+        this.step = function () {
+            if(this.down){//爆破动画
+
+                this.frameIndex++;
+                if(this.frameIndex == this.sum){
+                    this.frameIndex = this.sum-1;
+                    life--;
+                    if(life == 0){
+                        state = GAMEOVER;
+                    }else{
+                        hero = new Hero(HERO);
+                    }
+                }
+            }else{//切换动画
+                // this.frameIndex的值为0或1
+                // a. 分支结构 if..else..
+                /*if(this.frameIndex == 0){
+                    this.frameIndex = 1;
+                }else{
+                    this.frameIndex = 0;
+                }*/
+                // b. 三目运算
+                // c. 公式计算
+                this.speed++;
+                if(this.speed%2==0){
+                    this.frameIndex++;
+                }
+                if(this.frameIndex==3){
+                    this.frameIndex=0;
+                }
+            }
+        }
+        // 射击方法
+        this.shoot = function () {
+
+        }
+        // 撞击后的方法
+        this.canDown = function () {
+
+        }
+    }
+    //314创建我方飞机对象
+    var hero = new Hero(HERO);
+    //315为<canvas>元素绑定mousemove事件
+    canvas.onmousemove = function (event) {
+        if(state == RUNNING){
+           //a. 鼠标坐标值:pageX|clientX|offsetX|x
+           //b. 根据鼠标当前坐标值，修改hero的坐标值
+           hero.x = event.offsetX - hero.width/2;
+           hero.y = event.offsetY - hero.height/2;
+        }
+    }
+
+    // 32 完成子弹的功能
+    // 321 加载子弹图片
+    var bullet = new Image();
+    bullet.src = './img/bullet2.png';
+
+    var bullet2 = new Image();
+    bullet2.src = './img/bullet2.png';
+
+    var bullet3 = new Image();
+    bullet3.src = './img/bullet2.png';
+
+    var bullet4 = new Image();
+    bullet4.src = './img/bullet2.png';
+
+    var bullet5 = new Image();
+    bullet5.src = './img/bullet2.png';
+
+    var bullet6 = new Image();
+    bullet6.src = './img/bb.png';
+
+    var bullet7 = new Image();
+    bullet7.src = './img/bullet2.png';
+    // 322 初始化必要数据
+    var BULLET = {
+        imgs : bullet,
+        width : 11,
+        height :25
+    }
+
+    var BULLET2 = {
+        imgs : bullet2,
+        width : 11,
+        height :25
+    }
+
+    var BULLET3 = {
+        imgs : bullet3,
+        width : 11,
+        height :25
+    }
+
+    var BULLET4 = {
+        imgs : bullet4,
+        width : 11,
+        height :25
+    }
+
+    var BULLET5 = {
+        imgs : bullet5,
+        width : 11,
+        height :25
+    }
+
+    var BULLET6 = {
+        imgs : bullet6,
+        width : 11,
+        height :25
+    }
+
+    var BULLET7 = {
+        imgs : bullet7,
+        width : 11,
+        height :25
+    }
+    var wudi=0;
+    var dj=0;
+    var speed2=0;
+    // 323 定义子弹的构造器
+    function Bullet(config) {
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        // 定义子弹的坐标
+        this.x = hero.x + hero.width/2 - this.width/2;
+        this.y = hero.y + hero.height/2 - this.height/2;
+        //定义是否允许删除子弹的标识
+        this.del = false;
+        // 绘制方法
+        this.paint = function (cxt) {
+            cxt.drawImage(this.imgs, this.x, this.y);
+        }
+
+
+        //移动方法
+        this.step = function () {
+            this.y -=25; //150*Math.cos((Math.PI/8)*speed2);
+        }
+    }
+
+    function Bullet2(config) {
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height
+        //定义子弹的坐标值
+        this.x1 = hero.x + hero.width/2 -this.width -20;
+        this.y1 = hero.y - this.height + 10;
+        //定义是否允许删除子弹的标识
+        this.del2 = false;
+        //绘制方法
+        this.paint2 = function (cxt) {
+            cxt.drawImage(this.imgs, this.x1, this.y1);
+        }
+
+        //移动方法
+        this.step2 = function () {
+            this.y1 -=25;
+        }
+    }
+
+
+    function Bullet3(config) {
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        // 定义子弹的坐标值
+
+        this.x2 = hero.x + hero.width/2 - this.width+30;
+        this.y2 = hero.y - this.height +10;
+
+        // 定义是否允许删除子弹的标识
+        this.del3 = false;
+        // 绘制方法
+
+        this.paint3 = function(cxt){
+            cxt.drawImage(this.imgs,this.x2,this.y2);
+        }
+
+
+        // 移动方法
+
+        this.step3 = function(){
+            this.y2 -=25;
+
+        }
+    }
+    function Bullet4(config) {
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        // 定义子弹的坐标值
+
+        this.x3 = hero.x + hero.width/2 - this.width-3;
+        this.y3 = hero.y - this.height +10;
+
+        // 定义是否允许删除子弹的标识
+        this.del4 = false;
+        // 绘制方法
+
+        this.paint4 = function(cxt){
+            cxt.drawImage(this.imgs,this.x3,this.y3);
+        }
+
+
+        // 移动方法
+
+        this.step4 = function(){
+            this.y3 -=25;
+
+
+        }
+    }
+    function Bullet5(config) {
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        // 定义子弹的坐标值
+
+        this.x4 = hero.x + hero.width/2 - this.width+15;
+        this.y4 = hero.y - this.height +10;
+
+        // 定义是否允许删除子弹的标识
+        this.del5 = false;
+        // 绘制方法
+
+        this.paint5 = function(cxt){
+            cxt.drawImage(this.imgs,this.x4,this.y4);
+        }
+
+
+        // 移动方法
+
+        this.step5 = function(){
+            this.y4 -=25;
+
+        }
+    }
+
+    function Bullet6(config){
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        // 定义子弹的坐标值
+
+        this.x5 = hero.x + hero.width/2 - this.width-80;
+        this.y5 = hero.y - this.height +10;
+
+        // 定义是否允许删除子弹的标识
+        this.del6 = false;
+        // 绘制方法
+
+        this.paint6 = function(cxt){
+            cxt.drawImage(this.imgs,this.x5,this.y5);
+        }
+
+
+        // 移动方法
+
+        this.step6 = function(){
+            this.y5 -=25;
+            this.x5-=20;
+
+
+        }
+
+    }
+    function Bullet7(config){
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        // 定义子弹的坐标值
+
+        this.x6 = hero.x + hero.width/2 - this.width+80;
+        this.y6 = hero.y - this.height +10;
+
+        // 定义是否允许删除子弹的标识
+        this.del7 = false;
+        // 绘制方法
+
+        this.paint7 = function(cxt){
+            cxt.drawImage(this.imgs,this.x6,this.y6);
+        }
+
+
+        // 移动方法
+
+        this.step7 = function(){
+            this.y6 -=25;
+            this.x6-=-20;
+
+        }
+
+    }
+
+
+
+
+
+
+    // 324 创建存储子弹的数组
+    var bullets = [];
+    var bullets2 = [];
+    var bullets3 = [];
+    var bullets4 = [];
+    var bullets5 = [];
+    var bullets6 = [];
+    var bullets7 = [];
+
+
+    // 325 定义绘制所有子弹的函数
+    function paintBullets() {
+        for(var i=0;i<bullets.length;i++){
+            bullets[i].paint(context);
+        }
+    }
+
+
+
+
+
+
+    // 定义核心控制器
+    setInterval(function () {
+        backg.paint(context);//绘制背景图片
+        backg.step();//动画
+
+        switch (state){
+            case START:
+                context.drawImage(logo, 20, 0);//绘制LOGO
+                break;
+            case STARTTING:
+                loading.paint(context);//绘制动画图片
+                loading.step();//动画方法执行
+                break;
+            case RUNNING:
+                hero.paint(context);//绘制方法
+                hero.step();//动画方法
+        }
+    },30)
 </script>
 </body>
 </html>
