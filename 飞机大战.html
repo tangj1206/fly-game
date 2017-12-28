@@ -222,12 +222,49 @@
             }
         }
         // 射击方法
-        this.shoot = function () {
+        this.shoot = function(){
+            bullets[bullets.length] = new Bullet(BULLET);
+
+            if(wudi==1||(score>=20&&score<100)){
+                bullets2[bullets2.length] = new Bullet2(BULLET2);
+            }else if(wudi==2||(score>=100&&score<150)){
+                bullets2[bullets2.length] = new Bullet2(BULLET2);
+                bullets3[bullets3.length] = new Bullet3(BULLET3);
+            }
+            else if(wudi==3||(score>=150&&score<200)){
+                bullets2[bullets2.length] = new Bullet2(BULLET2);
+                bullets3[bullets3.length] = new Bullet3(BULLET3);
+                bullets4[bullets4.length] = new Bullet4(BULLET4);
+            }else if(wudi==4||(score>=200&&score<250)){
+                bullets2[bullets2.length] = new Bullet2(BULLET2);
+                bullets3[bullets3.length] = new Bullet3(BULLET3);
+                bullets4[bullets4.length] = new Bullet4(BULLET4);
+                bullets5[bullets5.length] = new Bullet5(BULLET5);
+            }else if(wudi==5||(score>=250&&score<300)){
+                bullets2[bullets2.length] = new Bullet2(BULLET2);
+                bullets3[bullets3.length] = new Bullet3(BULLET3);
+                bullets4[bullets4.length] = new Bullet4(BULLET4);
+                bullets5[bullets5.length] = new Bullet5(BULLET5);
+                bullets6[bullets6.length] = new Bullet6(BULLET6);
+            }else if(wudi==6||score>=300){
+                bullets2[bullets2.length] = new Bullet2(BULLET2);
+                bullets3[bullets3.length] = new Bullet3(BULLET3);
+                bullets4[bullets4.length] = new Bullet4(BULLET4);
+                bullets5[bullets5.length] = new Bullet5(BULLET5);
+                bullets6[bullets6.length] = new Bullet6(BULLET6);
+                bullets7[bullets7.length] = new Bullet7(BULLET7);
+            }else if(wudi==7){
+                wudi=0;
+            }
 
         }
         // 撞击后的方法
         this.canDown = function () {
-
+            this.life--;
+            if(this.life==0){
+                this.down = true;// 表示执行爆破动画
+                this.frameIndex = 2;
+            }// 动画图片切换到爆破
         }
     }
     //314创建我方飞机对象
@@ -263,7 +300,7 @@
     bullet6.src = './img/bb.png';
 
     var bullet7 = new Image();
-    bullet7.src = './img/bullet2.png';
+    bullet7.src = './img/bb.png';
     // 322 初始化必要数据
     var BULLET = {
         imgs : bullet,
@@ -315,8 +352,8 @@
         this.width = config.width;
         this.height = config.height;
         // 定义子弹的坐标
-        this.x = hero.x + hero.width/2 - this.width/2;
-        this.y = hero.y + hero.height/2 - this.height/2;
+        this.x = hero.x + hero.width/2 - this.width/2 - 1;
+        this.y = hero.y - hero.height/2 - 5;
         //定义是否允许删除子弹的标识
         this.del = false;
         // 绘制方法
@@ -479,7 +516,7 @@
 
         this.step7 = function(){
             this.y6 -=25;
-            this.x6-=-20;
+            this.x6 -=-20;
 
         }
 
@@ -501,15 +538,516 @@
 
 
     // 325 定义绘制所有子弹的函数
-    function paintBullets() {
+    function paintBullets(){
         for(var i=0;i<bullets.length;i++){
             bullets[i].paint(context);
         }
+        for(var k=0;k<bullets2.length;k++){
+
+            bullets2[k].paint2(context);
+
+        }
+        for(var l=0;l<bullets3.length;l++){
+
+            bullets3[l].paint3(context);
+
+        }
+        for(var m=0;m<bullets4.length;m++){
+
+            bullets4[m].paint4(context);
+
+        }
+        for(var n=0;n<bullets5.length;n++){
+
+            bullets5[n].paint5(context);
+
+        }
+        for(var u=0;u<bullets6.length;u++){
+
+            bullets6[u].paint6(context);
+
+        }
+        for(var p=0;p<bullets7.length;p++){
+
+            bullets7[p].paint7(context);
+
+        }
+    }
+    // 326定义移动所有子弹的函数
+    function stepBullets(){
+        for(var i=0;i<bullets.length;i++){
+            bullets[i].step();
+        }
+        for(var k=0;k<bullets2.length;k++){
+            bullets2[k].step2();
+        }
+        for(var l=0;l<bullets3.length;l++){
+            bullets3[l].step3();
+        }
+        for(var m=0;m<bullets4.length;m++){
+
+            bullets4[m].step4();
+
+        }
+        for(var n=0;n<bullets5.length;n++){
+
+            bullets5[n].step5();
+
+        }
+        for(var u=0;u<bullets6.length;u++){
+
+            bullets6[u].step6();
+
+        }
+        for(var p=0;p<bullets7.length;p++){
+
+            bullets7[p].step7();
+
+        }
+    }
+    // 327 定义移除飞出画面子弹的函数
+    function delBullets(){
+        for(var i=0;i<bullets.length;i++){
+            if(bullets[i].y <= -bullets[i].height || bullets[i].del){
+                bullets.splice(i,1);
+            }
+
+        }
+        for(var k=0;k<bullets2.length;k++){
+            if(bullets2[k].y1 <= -bullets2[k].height || bullets2[k].del){
+                bullets2.splice(k,1);
+            }
+        }
+        for(var l=0;l<bullets3.length;l++){
+            if(bullets3[l].y2 <= -bullets3[l].height || bullets3[l].del){
+                bullets3.splice(l,1);
+            }
+        }
+        for(var m=0;m<bullets4.length;m++){
+            if(bullets4[m].y3 <= -bullets4[m].height || bullets4[m].del){
+                bullets4.splice(m,1);
+            }
+        }
+        for(var n=0;n<bullets5.length;n++){
+            if(bullets5[n].y4 <= -bullets5[n].height || bullets5[n].del){
+                bullets5.splice(n,1);
+            }
+        }
+        for(var u=0;u<bullets6.length;u++){
+            if(bullets6[u].y5 <= -bullets6[u].height || bullets6[u].del){
+                bullets6.splice(u,1);
+            }
+        }
+        for(var p=0;p<bullets7.length;p++){
+            if(bullets7[p].y6 <= -bullets7[p].height || bullets7[p].del){
+                bullets7.splice(p,1);
+            }
+        }
+
     }
 
+    // 33 完成地方飞机的功能
+    // 331 加载敌方飞机的图片
+    var enemy1 = [];
+    enemy1[0] = new Image();
+    enemy1[0].src="./img/enemy1.png";
+    enemy1[1] = new Image();
+    enemy1[1].src="./img/enemy1_down1.png";
+    enemy1[2] = new Image();
+    enemy1[2].src="./img/enemy1_down2.png";
+    enemy1[3] = new Image();
+    enemy1[3].src="./img/enemy1_down3.png";
+    enemy1[4] = new Image();
+    enemy1[4].src="./img/enemy1_down4.png";
+    enemy1[5] = new Image();
+    enemy1[5].src="./img/enemy1_down5.png";
+    enemy1[6] = new Image();
+    enemy1[6].src="./img/enemy1_down6.png";
+    var enemy2 = [];
+    enemy2[0] = new Image();
+    enemy2[0].src = "./img/enemy2.png";
+    enemy2[1] = new Image();
+    enemy2[1].src = "./img/enemy3_down1.png";
+    enemy2[2] = new Image();
+    enemy2[2].src = "./img/enemy3_down2.png";
+    enemy2[3] = new Image();
+    enemy2[3].src = "./img/enemy3_down3.png";
+    enemy2[4] = new Image();
+    enemy2[4].src = "./img/enemy3_down4.png";
+    enemy2[5] = new Image();
+    enemy2[5].src = "./img/enemy3_down5.png";
+    enemy2[6] = new Image();
+    enemy2[6].src = "./img/enemy3_down6.png";
+    var enemy3 = [];
+    enemy3[0] = new Image();
+    enemy3[0].src = "./img/enemy3_n1.png";
+    enemy3[1] = new Image();
+    enemy3[1].src = "./img/enemy3_n2.png";
+    enemy3[2] = new Image();
+    enemy3[2].src = "./img/enemy6_down1.png";
+    enemy3[3] = new Image();
+    enemy3[3].src = "./img/enemy6_down2.png";
+    enemy3[4] = new Image();
+    enemy3[4].src = "./img/enemy6_down3.png";
+    enemy3[5] = new Image();
+    enemy3[5].src = "./img/enemy6_down4.png";
+    enemy3[6] = new Image();
+    enemy3[6].src = "./img/enemy6_down5.png";
+    enemy3[7] = new Image();
+    enemy3[7].src = "./img/enemy6_down6.png";
+    var enemy4 = [];
+    enemy4[0] = new Image();
+    enemy4[0].src = "./img/enemy4.png";
+    enemy4[1] = new Image();
+    enemy4[1].src = "./img/enemy3_down1.png";
+    enemy4[2] = new Image();
+    enemy4[2].src = "./img/enemy3_down2.png";
+    enemy4[3] = new Image();
+    enemy4[3].src = "./img/enemy3_down3.png";
+    enemy4[4] = new Image();
+    enemy4[4].src = "./img/enemy3_down4.png";
+    enemy4[5] = new Image();
+    enemy4[5].src = "./img/enemy3_down5.png";
+    enemy4[6] = new Image();
+    enemy4[6].src = "./img/enemy3_down6.png";
+    var enemy5 = [];
+    enemy5[0] = new Image();
+    enemy5[0].src = "./img/enemy4.png";
+    enemy5[1] = new Image();
+    enemy5[1].src = "./img/enemy1_down1.png";
+    enemy5[2] = new Image();
+    enemy5[2].src = "./img/enemy1_down2.png";
+    enemy5[3] = new Image();
+    enemy5[3].src = "./img/enemy1_down3.png";
+    enemy5[4] = new Image();
+    enemy5[4].src = "./img/enemy1_down4.png";
+    enemy5[5] = new Image();
+    enemy5[5].src = "./img/enemy1_down5.png";
+    enemy5[6] = new Image();
+    enemy5[6].src = "./img/enemy1_down6.png";
+    // 332 初始化必要的数据
+    var ENEMY1 ={
+        imgs : enemy1,
+        width : 68,
+        height : 55,
+        sum : enemy1.length,
+        type : 1,
+        life : 4,
+        score : 1
+    }
+    var ENEMY2 = {
+        imgs : enemy2,
+        width : 90,
+        height : 60,
+        sum : enemy2.length,
+        type : 2,
+        life : 10,
+        score : 3
+    }
+    var ENEMY3 = {
+        imgs : enemy3,
+        width : 222,
+        height : 170,
+        sum : enemy3.length,
+        type : 3,//种类
+        life : 20,//生命值
+        score : 10
+    }
+    var ENEMY4 ={
+        imgs : enemy4,
+        width : 68,
+        height : 45,
+        sum : enemy4.length,
+        type : 1,
+        life : 4,
+        score : 1
+    }
+    var ENEMY5 ={
+        imgs : enemy5,
+        width : 68,
+        height : 55,
+        sum : enemy1.length,
+        type : 1,
+        life : 4,
+        score : 1
+    }
+    // 333 定义敌方飞机的构造器
+    function Enemy(config){
+        this.imgs = config.imgs;
+        this.width = config.width;
+        this.height = config.height;
+        this.sum = config.sum;
+        this.type = config.type;
+        // 增加敌方飞机的生命值
+        this.life = config.life;
+        // 增加敌方飞机的得分
+        this.score = config.score;
+        // 定义敌方飞机的坐标值
+        this.x = Math.random()*(WIDTH-this.width);
+        this.y = -this.height;
+        // 定义数组索引值
+        this.frameIndex = 0;
+        // 定义是否执行爆破动画的标识
+        this.down = false;
+        // 定义是否允许删除的标识
+        this.del = false;
+        // 绘制方法
+        this.paint = function(cxt){
+            cxt.drawImage(this.imgs[this.frameIndex],this.x,this.y);
+        }
+        this.speed=0;
+        // 移动方法
+        this.step = function(){
+            if(this.down){//爆破
+                this.speed++;
+                if(this.speed%10==0){
+                    this.frameIndex++;
+                }
+                if(this.frameIndex == 7){
+                    this.del = true;
+                    score += this.score;
+                    this.frameIndex = this.sum - 1;
+                }
+            }else{//正常
+                switch (this.type){
+                    case 1://小飞机
+                        this.frameIndex = 0;
+                        this.y += 5;
+                        break;
+                    case 2://中飞机
+                        this.frameIndex = 0;
+                        this.y += 3;
+                        break;
+                    case 3://大飞机
+                        this.frameIndex = (this.frameIndex == 0) ? 1 : 0;
+                        this.y+=3;
+                        break;
+                    case 4://小飞机
+                        this.frameIndex =  0;
+                        this.y+=5;
+                        break;
 
+                }
+            }
+        }
+        // 敌方飞机被撞击的规则
+        this.hit = function(compont){
+            // 我方 - 1)子弹;2)我方飞机
+            return compont.y + compont.height >= this.y &&
+                compont.x + compont.width >= this.x &&
+                compont.y <= this.y + this.height &&
+                compont.x <= this.x + this.width||
+                (compont.y1 + compont.height >= this.y &&
+                    compont.x1 + compont.width >= this.x &&
+                    compont.y1 <= this.y + this.height &&
+                    compont.x1 <= this.x + this.width)||
+                (compont.y2 + compont.height >= this.y &&
+                    compont.x2 + compont.width >= this.x &&
+                    compont.y2 <= this.y + this.height &&
+                    compont.x2 <= this.x + this.width)||
+                (compont.y3 + compont.height >= this.y &&
+                    compont.x3 + compont.width >= this.x &&
+                    compont.y3 <= this.y + this.height &&
+                    compont.x3 <= this.x + this.width)||
+                (compont.y4 + compont.height >= this.y &&
+                    compont.x4 + compont.width >= this.x &&
+                    compont.y4 <= this.y + this.height &&
+                    compont.x4 <= this.x + this.width)||
+                (compont.y5 + compont.height >= this.y &&
+                    compont.x5 + compont.width >= this.x &&
+                    compont.y5 <= this.y + this.height &&
+                    compont.x5 <= this.x + this.width)||
+                (compont.y6 + compont.height >= this.y &&
+                    compont.x6 + compont.width >= this.x &&
+                    compont.y6 <= this.y + this.height &&
+                    compont.x6 <= this.x + this.width);
+        }
+        this.canDown = function(){
+            this.life--;//生命值-1
+            // 判断生命值是否为0
+            if(this.life == 0){
+                this.down = true;//表示执行爆破动画
+                if(this.type == 3){//大飞机
+                    this.frameIndex = 2;
+                }else{//小|中飞机
+                    this.frameIndex = 1;
+                }
+            }
+        }
+    }
+    // 334 创建敌方飞机的数组
+    var enemies = [];
+    // 335 定义生成敌方飞机的函数
+    function createEnemy(){
+        var num = Math.random()*((500-1+1)-1);
+        if(num <= 15&&num>=6){//小飞机
+            enemies[enemies.length] = new Enemy(ENEMY1);
+        }else if(num <= 20&&num>=7){//中飞机
+            enemies[enemies.length] = new Enemy(ENEMY2);
+        }else if(num <= 40&&num>=21){//中飞机
+            enemies[enemies.length] = new Enemy(ENEMY4);
+        }else if(num <= 45&&num>=41){//中飞机
+            enemies[enemies.length] = new Enemy(ENEMY5);
+        }else if(num <=5.9){//大飞机
+            /*
+              判断数组的第一个元素
+              * 如果第一个元素是大飞机,不再生成
+              * 如果第一个元素不是大飞机,将第一个元素替换成大飞机
+             */
+            if(enemies.length > 0 && enemies[0].type != 3){
+                enemies.splice(0,0,new Enemy(ENEMY3));
+            }
+        }
+    }
+    // 336 绘制所有敌方飞机的函数
+    function paintEnemies(){
+        for(var i=0;i<enemies.length;i++){
+            enemies[i].paint(context);
+        }
+    }
+    // 337 移动所有敌方飞机的函数
+    function stepEnemies(){
+        for(var i=0;i<enemies.length;i++){
+            enemies[i].step();
+        }
+    }
+    // 338 移除飞出画面的敌方飞机函数
+    function delEnemies(){
+        for(var i=0;i<enemies.length;i++){
+            if(enemies[i].y == HEIGHT || enemies[i].del){
+                enemies.splice(i,1);
+            }
+        }
+    }
 
+    // 34 定义判断当前敌方飞机是否被撞击的函数
+    function checkHit(){
+        // a. 遍历所有的敌方飞机
+        for(var i=0;i<enemies.length;i++){
+            // 被我方飞机撞击
+            if(enemies[i].hit(hero) && !hero.down && !enemies[i].down){
+                hero.canDown();//我方飞机执行被撞击后的逻辑
+                enemies[i].canDown();//敌方飞机执行被撞击后的逻辑
+            }
+            // 被子弹撞击
+            for(var j=0;j<bullets.length;j++){
+                if(enemies[i].hit(bullets[j]) && !enemies[i].down){
+                    bullets[j].del = true;//子弹撞击后的逻辑
+                    enemies[i].canDown();//敌方飞机执行被撞击后的逻辑
+                }
+            }
+            for(var o=0;o<bullets2.length;o++){
+                if(enemies[i].hit(bullets2[o]) && !enemies[i].down){
+                    bullets2[o].del2 = true;//子弹撞击后的逻辑
+                    enemies[i].canDown();//敌方飞机执行被撞击后的逻辑
+                }
+            }
+            for(var l=0;l<bullets3.length;l++){
+                if(enemies[i].hit(bullets3[l]) && !enemies[i].down){
+                    bullets3[l].del3 = true;//子弹撞击后的逻辑
+                    enemies[i].canDown();//敌方飞机执行被撞击后的逻辑
+                }
+            }
+            for(var m=0;m<bullets4.length;m++){
+                if(enemies[i].hit(bullets4[m]) && !enemies[i].down){
+                    bullets4[m].del4 = true;//子弹撞击后的逻辑
+                    enemies[i].canDown();//敌方飞机执行被撞击后的逻辑
+                }
+            }
+            for(var n=0;n<bullets5.length;n++){
+                if(enemies[i].hit(bullets5[n]) && !enemies[i].down){
+                    bullets5[n].del5 = true;//子弹撞击后的逻辑
+                    enemies[i].canDown();//敌方飞机执行被撞击后的逻辑
+                }
+            }
+            for(var u=0;u<bullets6.length;u++){
+                if(enemies[i].hit(bullets6[u]) && !enemies[i].down){
+                    bullets6[u].del6 = true;//子弹撞击后的逻辑
+                    enemies[i].canDown();//敌方飞机执行被撞击后的逻辑
+                }
+            }
+            for(var p=0;p<bullets7.length;p++){
+                if(enemies[i].hit(bullets7[p]) && !enemies[i].down){
+                    bullets7[p].del7 = true;//子弹撞击后的逻辑
+                    enemies[i].canDown();//敌方飞机执行被撞击后的逻辑
+                }
+            }
 
+        }
+    }
+    
+    // 35 在画布中绘制游戏得分和生命值
+    function paintText() {
+        context.font = "bold 24px 微软雅黑";
+        context.fillText("SCORE : "+score,10,30);
+        context.fillText("LIFE : "+life,380,30);
+    }
+    
+    // 4 完成游戏的暂停阶段
+    // 41 当鼠标离开画布
+    canvas.onmouseout = function () {
+        if(state == RUNNING){
+            state = PAUSED;
+        }
+    }
+    // 42 当鼠标回到画布
+    canvas.onmouseover = function () {
+        if(state == PAUSED){
+            state = RUNNING;
+        }
+    }
+    // 43 绘制游戏暂停阶段的暂停标识
+    var paused = new Image();
+    paused.src = "./img/game_pause_nor.png";
+    paused.width = 60;
+    paused.height = 45;
+
+    // 5 绘制GAMEOVER的提示内容
+    function paintOver() {
+        context.font = "bold 48px 微软雅黑";
+        context.fillText("GAME OVER",WIDTH/2-150,HEIGHT/2);
+    }
+    //触发键盘
+    document.onkeydown = function (event) {
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        if(e && e.keyCode==90){ // 按 z
+            bullet.src="./img/bullet1.png";//制造
+        }
+        if(e && e.keyCode==88){ // 按 x
+            bullet.src="./img/bullet3.png";//制造
+        }
+        if(e && e.keyCode==67){ // 按 c
+            bullet.src="./img/bullet2.png";//制造
+        }
+        if(e && e.keyCode==81){ // 按 q
+            heros[0].src="./img/heroy1.png";//
+            heros[1].src="./img/heroy2.png";//
+            heros[2].src="./img/heroy3.png";//
+        }
+        if(e && e.keyCode==87){ // 按 w
+            heros[0].src="http://www.lxstly.sgzlkj.com/images2/heror1.png";//
+            heros[1].src="http://www.lxstly.sgzlkj.com/images2/heror2.png";//
+            heros[2].src="http://www.lxstly.sgzlkj.com/images2/heror3.png";//
+        }
+        if(e && e.keyCode==69){ // 按 e
+            heros[0].src="http://www.lxstly.sgzlkj.com/images2/hero1.png";//
+            heros[1].src="http://www.lxstly.sgzlkj.com/images2/hero2.png";//
+            heros[2].src="http://www.lxstly.sgzlkj.com/images2/hero3.png";//
+        }
+        if(e && e.keyCode==82){ // 按 r
+            wudi++
+        }
+        if(e && e.keyCode==86){ // 按 v
+            dj++;
+            if(dj==1){
+                BULLET.width=24;
+                bullet.src = "http://www.lxstly.sgzlkj.com/images2/bullet2_lv2.png";
+            }else{dj=0;
+                BULLET.width=11;
+                bullet.src = "http://www.lxstly.sgzlkj.com/images2/bullet2.png";
+            }
+        }
+    }
 
 
     // 定义核心控制器
@@ -528,6 +1066,37 @@
             case RUNNING:
                 hero.paint(context);//绘制方法
                 hero.step();//动画方法
+                hero.shoot();//射击方法
+
+                paintBullets();//绘制所有子弹方法
+                stepBullets();//移动所有子弹方法
+                delBullets();//移除飞出画面的子弹
+
+                createEnemy();// 生成敌方飞机的方法
+                paintEnemies();// 绘制敌方飞机的方法
+                stepEnemies();// 移动敌方飞机的方法
+                delEnemies();// 移除飞出画面的敌机方法
+
+                checkHit();//检查是否撞击方法
+
+                paintText();//绘制游戏得分和生命值
+                break;
+            case PAUSED:
+                hero.paint(context);// 绘制方法
+                paintBullets();// 绘制所有子弹
+                paintEnemies();//绘制敌方飞机的方法
+
+                paintText();//绘制游戏得分和生命值
+                context.drawImage(paused, WIDTH/2-paused.width/2, HEIGHT/2 - paused.height/2);
+                break;
+            case GAMEOVER:
+                hero.paint(context);//绘制英雄方法
+                paintBullets();//绘制所有子弹方法
+                paintEnemies();//绘制敌方飞机方法
+
+                paintText();//绘制游戏得分和生命值
+                paintOver();
+                break;
         }
     },30)
 </script>
